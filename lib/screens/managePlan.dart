@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:tomato_gym/settings/plan.dart';
 import 'package:tomato_gym/settings/utils.dart';
+import 'package:tomato_gym/widgets/customButton.dart';
 
 class ManagePlan extends StatefulWidget {
   const ManagePlan({super.key});
@@ -12,22 +13,24 @@ class ManagePlan extends StatefulWidget {
 }
 
 class _ManagePlanState extends State<ManagePlan> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Plan().data.isEmpty ?
+  bool newPlan = false;
 
-      // if no plan has been found
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Widget welcomePage() {
+    return 
+    // if no plan has been found
       Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           // welcome
-          Text(Utils().translate(context, "welcome"),
+          Text(
+            Utils().translate(context, "welcome"),
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 40
-            ),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
           ),
 
           SizedBox(height: 50),
@@ -35,12 +38,10 @@ class _ManagePlanState extends State<ManagePlan> {
           // message
           Container(
             width: 200,
-            child: Text(Utils().translate(context, "no_plan_found"),
+            child: Text(
+              Utils().translate(context, "no_plan_found"),
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 23
-              ),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 23),
             ),
           ),
 
@@ -48,31 +49,27 @@ class _ManagePlanState extends State<ManagePlan> {
 
           // button
           Center(
-            child: GestureDetector(
-              onTap: () {
-                
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.red,
-                  borderRadius: BorderRadius.circular(10)
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                  child: Text(Utils().translate(context, "create_new_plan"),
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18
-                    ),
-                  ),
-                ),
-              ),
-            )
-          ),
+            child: CustomButton(text: Utils().translate(context, "create_new_plan"), onTap: () {
+              setState(() {
+                newPlan = true;
+              });
+            })),
         ],
-      )
-      :
-      Center(child: Text("aa")),
+      );
+  }
+
+  Widget loadPlan() {
+    return Center(child: Text("bb"));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Plan().data.isEmpty && !newPlan
+          ? welcomePage()
+          : newPlan
+              ? loadPlan()
+              : Center(child: Text("aa")),
     );
   }
 }
