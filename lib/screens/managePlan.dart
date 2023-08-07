@@ -236,6 +236,7 @@ class _ManagePlanState extends State<ManagePlan> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        title: Text("🍅 Tomato Gym", style: TextStyle(color: Colors.black),),
       ),
       body: SessionData.elements.isEmpty && !newPlan
           ? welcomePage()
