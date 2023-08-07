@@ -4,6 +4,7 @@ class CustomButton extends StatelessWidget {
   VoidCallback onTap;
 
   String text;
+  IconData icon;
   Color textColor;
   Color buttonColor;
   double borderRadius;
@@ -11,7 +12,7 @@ class CustomButton extends StatelessWidget {
   double horizontalPadding;
   double fontSize;
 
-  CustomButton({super.key, required this.onTap, required this.text, this.textColor = Colors.white, this.buttonColor = Colors.red, this.borderRadius = 10, this.fontSize = 18, this.horizontalPadding = 15, this.verticalPadding = 10});
+  CustomButton({super.key, required this.onTap, required this.text, required this.icon, this.textColor = Colors.white, this.buttonColor = Colors.red, this.borderRadius = 10, this.fontSize = 18, this.horizontalPadding = 15, this.verticalPadding = 10});
 
   @override
   Widget build(BuildContext context) {
@@ -21,9 +22,16 @@ class CustomButton extends StatelessWidget {
         decoration: BoxDecoration(color: buttonColor, borderRadius: BorderRadius.circular(borderRadius)),
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: verticalPadding, horizontal: horizontalPadding),
-          child: Text(
-            text,
-            style: TextStyle(color: textColor, fontSize: fontSize),
+          child: IntrinsicWidth(
+            child: Row(
+              children: [
+                Icon(icon, color: textColor,),
+                Text(
+                  text,
+                  style: TextStyle(color: textColor, fontSize: fontSize),
+                ),
+              ],
+            ),
           ),
         ),
       ),
