@@ -3,7 +3,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:tomato_gym/settings/plan.dart';
 import 'package:tomato_gym/settings/sessionData.dart';
 import 'package:tomato_gym/settings/utils.dart';
 import 'package:tomato_gym/widgets/customButton.dart';
@@ -19,8 +18,10 @@ class ManagePlan extends StatefulWidget {
 class _ManagePlanState extends State<ManagePlan> {
   bool newPlan = false;
 
-  //final TextEditingController exerciseName = TextEditingController();
   List<TextEditingController> exerciseNameList = [];
+  List<TextEditingController> setsList = [];
+  List<TextEditingController> repsList = [];
+  List<TextEditingController> initWeightList = [];
 
   @override
   void initState() {
@@ -33,6 +34,9 @@ class _ManagePlanState extends State<ManagePlan> {
     for (var el in SessionData.elements) {
       setState(() {
         exerciseNameList.add(TextEditingController());
+        setsList.add(TextEditingController());
+        repsList.add(TextEditingController());
+        initWeightList.add(TextEditingController());
       });
     }
   }
@@ -45,8 +49,19 @@ class _ManagePlanState extends State<ManagePlan> {
   }
 
   Widget exerciseForm(int i) {
+    if (SessionData.elements[i].divider) {
+      return Divider(
+        color: Colors.red,
+        thickness: 3,
+      );
+    }
+
     return Column(
       children: [
+        if (i > 0 && !SessionData.elements[i - 1].divider)
+          Divider(
+            color: Colors.grey[800],
+          ),
         SizedBox(height: 5),
         Row(
           children: [
@@ -79,7 +94,7 @@ class _ManagePlanState extends State<ManagePlan> {
             Expanded(
               child: CustomTextField(
                 hintText: Utils().translate(context, "sets"),
-                controller: exerciseNameList[i],
+                controller: setsList[i],
               ),
             ),
 
@@ -92,7 +107,7 @@ class _ManagePlanState extends State<ManagePlan> {
             Expanded(
               child: CustomTextField(
                 hintText: Utils().translate(context, "reps"),
-                controller: exerciseNameList[i],
+                controller: repsList[i],
               ),
             ),
 
@@ -102,15 +117,12 @@ class _ManagePlanState extends State<ManagePlan> {
             Expanded(
               child: CustomTextField(
                 hintText: Utils().translate(context, "init_weight"),
-                controller: exerciseNameList[i],
+                controller: initWeightList[i],
               ),
             )
           ],
         ),
         SizedBox(height: 5),
-        Divider(
-          color: Colors.grey[800],
-        ),
       ],
     );
   }
@@ -165,21 +177,53 @@ class _ManagePlanState extends State<ManagePlan> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           for (int i = 0; i < SessionData.elements.length; i++) exerciseForm(i),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              CustomButton(
-                  onTap: () {
-                    setState(() {
-                      SessionData.elements.add(Exercise());
-                    });
+          Padding(
+            padding: const EdgeInsets.only(top: 10, bottom: 30),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                // add exercise
+                CustomButton(
+                    onTap: () {
+                      setState(() {
+                        SessionData.elements.add(Exercise());
+                      });
 
-                    initDataSources();
-                  },
-                  text: Utils().translate(context, "exercise"),
-                  icon: Icons.add),
-              CustomButton(onTap: () {}, text: Utils().translate(context, "split_workout"), icon: Icons.horizontal_split),
-            ],
+                      initDataSources();
+                    },
+                    text: Utils().translate(context, "exercise"),
+                    icon: Icons.add),
+
+                SessionData.elements.isNotEmpty && SessionData.elements.last.divider
+                    ?
+                    // remove split
+                    CustomButton(
+                        onTap: () {
+                          setState(() {
+                            SessionData.elements.removeLast();
+                          });
+                        },
+                        text: Utils().translate(context, "delete_split_workout"),
+                        icon: Icons.remove_circle)
+                    :
+                    // add split
+                    CustomButton(
+                        onTap: () {
+                          if (SessionData.elements.isNotEmpty) {
+                            setState(() {
+                              Exercise newExercise = Exercise();
+                              newExercise.divider = true;
+
+                              SessionData.elements.add(newExercise);
+                            });
+                          }
+                        },
+                        text: Utils().translate(context, "split_workout"),
+                        icon: Icons.horizontal_split,
+                        buttonColor: SessionData.elements.isEmpty ? Colors.grey : Colors.red,
+                      ),
+              ],
+            ),
           )
         ],
       ),
@@ -193,7 +237,7 @@ class _ManagePlanState extends State<ManagePlan> {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: Plan().data.isEmpty && !newPlan
+      body: SessionData.elements.isEmpty && !newPlan
           ? welcomePage()
           : newPlan
               ? SingleChildScrollView(child: loadPlan())

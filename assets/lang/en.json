@@ -1,6 +1,7 @@
 {
     "add_exercise": "Add an exercise",
     "create_new_plan": "Create a new plan",
+    "delete_split_workout": "Delete split",
     "exercise": "Exercise",
     "exercise_name": "Exercise name",
     "init_weight": "Initial weight",
