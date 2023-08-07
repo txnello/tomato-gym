@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:tomato_gym/settings/plan.dart';
+import 'package:tomato_gym/settings/sessionData.dart';
 import 'package:tomato_gym/settings/utils.dart';
 import 'package:tomato_gym/widgets/customButton.dart';
 import 'package:tomato_gym/widgets/customTextField.dart';
@@ -18,11 +19,6 @@ class ManagePlan extends StatefulWidget {
 class _ManagePlanState extends State<ManagePlan> {
   bool newPlan = false;
 
-  List<Map<String, String>> elements = [
-    {"a": "b"},
-    {"a": "b"}
-  ];
-
   //final TextEditingController exerciseName = TextEditingController();
   List<TextEditingController> exerciseNameList = [];
 
@@ -34,7 +30,7 @@ class _ManagePlanState extends State<ManagePlan> {
   }
 
   initDataSources() {
-    for (var el in elements) {
+    for (var el in SessionData.elements) {
       setState(() {
         exerciseNameList.add(TextEditingController());
       });
@@ -43,7 +39,7 @@ class _ManagePlanState extends State<ManagePlan> {
 
   deleteExercise(int i) {
     setState(() {
-      elements.removeAt(i);
+      SessionData.elements.removeAt(i);
       exerciseNameList.removeAt(i);
     });
   }
@@ -57,6 +53,7 @@ class _ManagePlanState extends State<ManagePlan> {
             // exercise name
             Expanded(
               child: CustomTextField(
+                hintText: Utils().translate(context, "exercise_name"),
                 controller: exerciseNameList[i],
               ),
             ),
@@ -81,6 +78,7 @@ class _ManagePlanState extends State<ManagePlan> {
             // sets
             Expanded(
               child: CustomTextField(
+                hintText: Utils().translate(context, "sets"),
                 controller: exerciseNameList[i],
               ),
             ),
@@ -93,6 +91,7 @@ class _ManagePlanState extends State<ManagePlan> {
             // repetitions
             Expanded(
               child: CustomTextField(
+                hintText: Utils().translate(context, "reps"),
                 controller: exerciseNameList[i],
               ),
             ),
@@ -102,6 +101,7 @@ class _ManagePlanState extends State<ManagePlan> {
             // start weight
             Expanded(
               child: CustomTextField(
+                hintText: Utils().translate(context, "init_weight"),
                 controller: exerciseNameList[i],
               ),
             )
@@ -164,21 +164,21 @@ class _ManagePlanState extends State<ManagePlan> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          for (int i = 0; i < elements.length; i++) exerciseForm(i),
+          for (int i = 0; i < SessionData.elements.length; i++) exerciseForm(i),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               CustomButton(
                   onTap: () {
                     setState(() {
-                      elements.add({"a": "b"});
+                      SessionData.elements.add(Exercise());
                     });
 
                     initDataSources();
                   },
-                  text: "add",
+                  text: Utils().translate(context, "exercise"),
                   icon: Icons.add),
-              CustomButton(onTap: () {}, text: "new ex", icon: Icons.add),
+              CustomButton(onTap: () {}, text: Utils().translate(context, "split_workout"), icon: Icons.horizontal_split),
             ],
           )
         ],

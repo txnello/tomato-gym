@@ -25,7 +25,10 @@ class CustomButton extends StatelessWidget {
           child: IntrinsicWidth(
             child: Row(
               children: [
-                Icon(icon, color: textColor,),
+                Icon(icon, color: textColor),
+
+                SizedBox(width: text == "" ? 0 : 5),
+
                 Text(
                   text,
                   style: TextStyle(color: textColor, fontSize: fontSize),

@@ -1,6 +1,12 @@
 {
     "create_new_plan": "Crea una nuova scheda",
+    "exercise": "Esercizio",
+    "exercise_name": "Nome dell'esercizio",
+    "init_weight": "Peso iniziale",
     "no_plan_found": "Non hai ancora creato una scheda!",
+    "reps": "Ripetizioni",
+    "sets": "Serie",
+    "split_workout": "Dividi allenamento",
 
     "welcome": "Benvenuto!"
 }
