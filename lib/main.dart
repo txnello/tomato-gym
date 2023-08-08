@@ -1,12 +1,33 @@
 // ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_const_literals_to_create_immutables, depend_on_referenced_packages
 
+import "dart:convert";
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tomato_gym/screens/managePlan.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:tomato_gym/settings/app_localization.dart';
+import 'package:tomato_gym/settings/sessionData.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  loadSessionData();
+
   runApp(const MyApp());
+}
+
+loadSessionData() async {
+  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  final elements = await sharedPreferences.getStringList('elements');
+
+  if (elements == null) {
+    SessionData.elements = [];
+    return;
+  }
+
+  for (int i = 0; i < elements.length; i++) {
+    SessionData.elements.add(Exercise.fromJson(jsonDecode(elements[i])));
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -22,19 +43,13 @@ class MyApp extends StatelessWidget {
       ],
       localeResolutionCallback: (deviceLocale, supportedLocales) {
         for (var locale in supportedLocales) {
-            if (locale.languageCode == deviceLocale!.languageCode &&
-                locale.countryCode == deviceLocale.countryCode) {
-                return deviceLocale;
-             }
-         }
+          if (locale.languageCode == deviceLocale!.languageCode && locale.countryCode == deviceLocale.countryCode) {
+            return deviceLocale;
+          }
+        }
         return supportedLocales.first;
       },
-      localizationsDelegates: [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        AppLocalization.delegate
-    ],
+      localizationsDelegates: [GlobalMaterialLocalizations.delegate, GlobalWidgetsLocalizations.delegate, GlobalCupertinoLocalizations.delegate, AppLocalization.delegate],
 
       title: 'Flutter Demo',
       theme: ThemeData(

@@ -1,12 +1,13 @@
 // ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_const_literals_to_create_immutables
 
-import 'dart:async';
+import "dart:convert";
 
 import 'package:flutter/material.dart';
 import 'package:tomato_gym/settings/sessionData.dart';
 import 'package:tomato_gym/settings/utils.dart';
 import 'package:tomato_gym/widgets/customButton.dart';
 import 'package:tomato_gym/widgets/customTextField.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ManagePlan extends StatefulWidget {
   const ManagePlan({super.key});
@@ -17,6 +18,7 @@ class ManagePlan extends StatefulWidget {
 
 class _ManagePlanState extends State<ManagePlan> {
   bool newPlan = false;
+  bool isSaving = false;
 
   List<TextEditingController> exerciseNameList = [];
   List<TextEditingController> setsList = [];
@@ -44,7 +46,16 @@ class _ManagePlanState extends State<ManagePlan> {
   deleteExercise(int i) {
     setState(() {
       SessionData.elements.removeAt(i);
+
+      // delete divider if it is the first element of the list
+      if (SessionData.elements.isNotEmpty && SessionData.elements[0].divider) {
+        deleteExercise(0);
+      }
+
       exerciseNameList.removeAt(i);
+      setsList.removeAt(i);
+      repsList.removeAt(i);
+      initWeightList.removeAt(i);
     });
   }
 
@@ -236,13 +247,38 @@ class _ManagePlanState extends State<ManagePlan> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text("🍅 Tomato Gym", style: TextStyle(color: Colors.black),),
+        title: Text(
+          "🍅 Tomato Gym",
+          style: TextStyle(color: Colors.black),
+        ),
       ),
       body: SessionData.elements.isEmpty && !newPlan
           ? welcomePage()
           : newPlan
               ? SingleChildScrollView(child: loadPlan())
               : Center(child: Text("aa")),
+      floatingActionButton: SessionData.elements.isEmpty && !newPlan
+          ? SizedBox()
+          : FloatingActionButton(
+              onPressed: () async {
+                setState(() {
+                  isSaving = true;
+                });
+                SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+                List<String> elementEncoded = SessionData.elements.map((element) => jsonEncode(element.toJson())).toList();
+                await sharedPreferences.setStringList('elements', []); //elementEncoded);
+
+                setState(() {
+                  isSaving = false;
+                });
+              },
+              backgroundColor: Colors.red,
+              child: isSaving
+                  ? CircularProgressIndicator(
+                      color: Colors.white,
+                    )
+                  : Icon(Icons.save),
+            ),
     );
   }
 }
