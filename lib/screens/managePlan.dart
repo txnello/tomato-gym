@@ -39,6 +39,12 @@ class _ManagePlanState extends State<ManagePlan> {
         setsList.add(TextEditingController());
         repsList.add(TextEditingController());
         initWeightList.add(TextEditingController());
+
+        // init fields data
+        exerciseNameList.last.text = el.exerciseName;
+        setsList.last.text = el.sets;
+        repsList.last.text = el.reps;
+        initWeightList.last.text = el.initWeight;
       });
     }
   }
@@ -257,16 +263,25 @@ class _ManagePlanState extends State<ManagePlan> {
           : newPlan
               ? SingleChildScrollView(child: loadPlan())
               : Center(child: Text("aa")),
-      floatingActionButton: SessionData.elements.isEmpty && !newPlan
+      floatingActionButton: SessionData.elements.isEmpty && !newPlan || SessionData.elements.isEmpty
           ? SizedBox()
           : FloatingActionButton(
               onPressed: () async {
                 setState(() {
                   isSaving = true;
                 });
+
+                // save data
+                for (int i = 0; i < SessionData.elements.length; i++) {
+                  SessionData.elements[i].exerciseName = exerciseNameList[i].text;
+                  SessionData.elements[i].sets = setsList[i].text;
+                  SessionData.elements[i].reps = repsList[i].text;
+                  SessionData.elements[i].initWeight = initWeightList[i].text;
+                }
+
                 SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
                 List<String> elementEncoded = SessionData.elements.map((element) => jsonEncode(element.toJson())).toList();
-                await sharedPreferences.setStringList('elements', []); //elementEncoded);
+                await sharedPreferences.setStringList('elements', elementEncoded); //[]);
 
                 setState(() {
                   isSaving = false;
