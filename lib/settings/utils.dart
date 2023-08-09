@@ -32,4 +32,37 @@ class Utils {
       fontSize: 16.0
     );
   }
+
+  showAlertDialog(BuildContext context, String title, String text, VoidCallback onYes) {
+    // set up the buttons
+    Widget cancelButton = TextButton(
+      child: Text(Utils().translate(context, "generic_no")),
+      onPressed:  () {
+        Navigator.pop(context);
+      },
+    );
+    Widget continueButton = TextButton(
+      child: Text(Utils().translate(context, "generic_yes")),
+      onPressed:  onYes,
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text(title),
+      content: Text(text),
+      actions: [
+        continueButton,
+        cancelButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
 }

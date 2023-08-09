@@ -18,7 +18,7 @@ class ManagePlan extends StatefulWidget {
 }
 
 class _ManagePlanState extends State<ManagePlan> {
-  bool newPlan = false;
+  bool loadPlan = false;
   bool isSaving = false;
 
   List<TextEditingController> exerciseNameList = [];
@@ -36,6 +36,12 @@ class _ManagePlanState extends State<ManagePlan> {
   }
 
   initDataSources() {
+    exerciseNameList = [];
+    setsList = [];
+    repsList = [];
+    initWeightList = [];
+    currentWeightList = [];
+
     for (var el in SessionData.elements) {
       setState(() {
         exerciseNameList.add(TextEditingController());
@@ -54,6 +60,16 @@ class _ManagePlanState extends State<ManagePlan> {
     }
   }
 
+  addExercise() {
+    setState(() {
+      exerciseNameList.add(TextEditingController());
+      setsList.add(TextEditingController());
+      repsList.add(TextEditingController());
+      initWeightList.add(TextEditingController());
+      currentWeightList.add(TextEditingController());
+    });
+  }
+
   deleteExercise(int i) {
     setState(() {
       SessionData.elements.removeAt(i);
@@ -67,6 +83,31 @@ class _ManagePlanState extends State<ManagePlan> {
       setsList.removeAt(i);
       repsList.removeAt(i);
       initWeightList.removeAt(i);
+      currentWeightList.removeAt(i);
+    });
+  }
+
+  _editPlan() {
+    setState(() {
+      loadPlan = true;
+    });
+  }
+
+  _copyPlan() {}
+
+  _loadPlan() {
+    Utils().showAlertDialog(context, Utils().translate(context, "generic_warning") + '!', Utils().translate(context, "reset_confirmation"), () {
+      _resetData();
+
+      Navigator.pop(context);
+    });
+  }
+
+  _resetData() {
+    setState(() {
+      SessionData.elements = [];
+
+      initDataSources();
     });
   }
 
@@ -188,7 +229,7 @@ class _ManagePlanState extends State<ManagePlan> {
                 icon: Icons.arrow_right,
                 onTap: () {
                   setState(() {
-                    newPlan = true;
+                    loadPlan = true;
                   });
                 })),
       ],
@@ -214,7 +255,7 @@ class _ManagePlanState extends State<ManagePlan> {
                         SessionData.elements.add(Exercise());
                       });
 
-                      initDataSources();
+                      addExercise();
                     },
                     text: Utils().translate(context, "exercise"),
                     icon: Icons.add),
@@ -240,6 +281,7 @@ class _ManagePlanState extends State<ManagePlan> {
                               newExercise.divider = true;
 
                               SessionData.elements.add(newExercise);
+                              addExercise();
                             });
                           }
                         },
@@ -331,13 +373,49 @@ class _ManagePlanState extends State<ManagePlan> {
           "🍅 Tomato Gym",
           style: TextStyle(color: Colors.black),
         ),
+        actions: SessionData.elements.isNotEmpty && !loadPlan
+            ? [
+                GestureDetector(
+                  onTap: () {
+                    _editPlan();
+                  },
+                  child: Icon(
+                    Icons.edit,
+                    color: Colors.black,
+                    size: 30,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: GestureDetector(
+                      onTap: () {
+                        _copyPlan();
+                      },
+                      child: Icon(
+                        Icons.copy_all,
+                        color: Colors.black,
+                        size: 30,
+                      )),
+                ),
+                GestureDetector(
+                    onTap: () {
+                      _loadPlan();
+                    },
+                    child: Icon(
+                      Icons.add_box_rounded,
+                      color: Colors.black,
+                      size: 30,
+                    )),
+                SizedBox(width: 10)
+              ]
+            : [],
       ),
-      body: SessionData.elements.isEmpty && !newPlan
+      body: SessionData.elements.isEmpty && !loadPlan
           ? welcomePage()
-          : newPlan
+          : loadPlan
               ? SingleChildScrollView(child: loadEditablePlan())
               : SingleChildScrollView(child: loadReadOnlyPlan()),
-      floatingActionButton: SessionData.elements.isEmpty && !newPlan || SessionData.elements.isEmpty
+      floatingActionButton: SessionData.elements.isEmpty && !loadPlan || SessionData.elements.isEmpty
           ? SizedBox()
           : FloatingActionButton(
               onPressed: () async {
@@ -349,7 +427,7 @@ class _ManagePlanState extends State<ManagePlan> {
 
                 // retrieve data
                 for (int i = 0; i < SessionData.elements.length; i++) {
-                  if (!SessionData.elements[i].divider && (exerciseNameList[i].text == "" || setsList[i].text == "" || repsList[i].text == "" || initWeightList[i].text == "" || currentWeightList[i].text == "")) {
+                  if (!SessionData.elements[i].divider && (exerciseNameList[i].text == "" || setsList[i].text == "" || repsList[i].text == "" || initWeightList[i].text == "")) {
                     emptyFields = true;
                   }
 
@@ -391,7 +469,7 @@ class _ManagePlanState extends State<ManagePlan> {
 
                 setState(() {
                   isSaving = false;
-                  newPlan = false;
+                  loadPlan = false;
                 });
               },
               backgroundColor: Colors.red,
