@@ -1,4 +1,6 @@
 {
+    "copy_failure": "Errore nella copia.",
+    "copy_success": "Copia completata!",
     "create_new_plan": "Crea una nuova scheda",
     "current_weight": "Peso attuale",
 
@@ -18,7 +20,7 @@
     "no_plan_found": "Non hai ancora creato una scheda!",
 
     "reps": "Ripetizioni",
-    "reset_confirmation": "Sei sicuro di voler cancellare il piano attuale e di volerne iniziare uno nuovo? Tutti i dati salvati fin'ora saranno persi.",
+    "reset_confirmation": "Sei sicuro di voler cancellare il piano attuale e di volerne iniziare uno nuovo? Tutti i dati salvati fin'ora saranno persi.\n\nTi suggeriamo vivamente di chiudere questo popup, copiare i dati con l'apposito bottone copia, incollarli in un posto sicuro e, solo allora, procedere con la creazione di una nuova scheda. Ad ogni modo, proseguendo verrà effettuata una copia da incollare al più presto.",
 
     "save_failure": "Errore nel salvataggio.",
     "save_success": "Salvataggio completato!",

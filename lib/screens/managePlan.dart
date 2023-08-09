@@ -3,6 +3,7 @@
 import "dart:convert";
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tomato_gym/settings/sessionData.dart';
 import 'package:tomato_gym/settings/utils.dart';
 import 'package:tomato_gym/widgets/customButton.dart';
@@ -93,7 +94,30 @@ class _ManagePlanState extends State<ManagePlan> {
     });
   }
 
-  _copyPlan() {}
+  _copyPlan() async {
+    try {
+      String textCopy = "";
+
+      for (var el in SessionData.elements) {
+        if (el.divider) {
+          textCopy += "-----------------------------\n";
+          textCopy += "\n";
+        } else {
+          textCopy += Utils().translate(context, "exercise_name") + ": " + el.exerciseName + "\n";
+          textCopy += Utils().translate(context, "sets") + " X " + Utils().translate(context, "reps") + ": " + el.sets + " X " + el.reps + "\n";
+          textCopy += Utils().translate(context, "init_weight") + ": " + el.initWeight + "\n";
+          textCopy += Utils().translate(context, "current_weight") + ": " + el.currentWeight + "\n";
+          textCopy += "\n";
+        }
+      }
+
+      await Clipboard.setData(ClipboardData(text: textCopy));
+
+      Utils().successMessage(context, "copy_success");
+    } catch (e) {
+      Utils().errorMessage(context, "copy_failure");
+    }
+  }
 
   _loadPlan() {
     Utils().showAlertDialog(context, Utils().translate(context, "generic_warning") + '!', Utils().translate(context, "reset_confirmation"), () {
@@ -104,6 +128,8 @@ class _ManagePlanState extends State<ManagePlan> {
   }
 
   _resetData() {
+    _copyPlan();
+    
     setState(() {
       SessionData.elements = [];
 

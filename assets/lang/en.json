@@ -1,4 +1,6 @@
 {
+    "copy_failure": "Copying error.",
+    "copy_success": "Copied successfully!",
     "create_new_plan": "Create a new plan",
     "current_weight": "Current weight",
 
@@ -18,7 +20,7 @@
     "no_plan_found": "No plan found!",
 
     "reps": "Reps",
-    "reset_confirmation": "Are you sure you want to cancel your current plan and start a new one? All data saved up to now will be lost.",
+    "reset_confirmation": "Are you sure you want to cancel your current plan and start a new one? All data saved up to now will be lost.\n\nWe strongly suggest that you close this popup, copy the data with the appropriate copy button, paste it somewhere safe and, only then, proceed with creating a new plan. In any case, continuing will make a copy to paste as soon as possible.",
 
     "save_failure": "Saving error.",
     "save_success": "Saved successfully!",
