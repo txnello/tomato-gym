@@ -9,7 +9,7 @@ import 'package:tomato_gym/settings/utils.dart';
 import 'package:tomato_gym/widgets/customButton.dart';
 import 'package:tomato_gym/widgets/customTextField.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:package_info/package_info.dart';
 
 class ManagePlan extends StatefulWidget {
   const ManagePlan({super.key});
@@ -29,11 +29,22 @@ class _ManagePlanState extends State<ManagePlan> {
 
   List<TextEditingController> currentWeightList = [];
 
+  String version = "";
+
   @override
   void initState() {
     super.initState();
 
     initDataSources();
+    initUtils();
+  }
+
+  initUtils() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+
+    setState(() {
+      version = packageInfo.version;
+    });
   }
 
   initDataSources() {
@@ -129,7 +140,7 @@ class _ManagePlanState extends State<ManagePlan> {
 
   _resetData() {
     _copyPlan();
-    
+
     setState(() {
       SessionData.elements = [];
 
@@ -395,9 +406,14 @@ class _ManagePlanState extends State<ManagePlan> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text(
-          "🍅 Tomato Gym",
-          style: TextStyle(color: Colors.black),
+        title: GestureDetector(
+          onDoubleTap: () {
+            Utils().successMessage(context, version, translate: false);
+          },
+          child: Text(
+            "🍅 Tomato Gym",
+            style: TextStyle(color: Colors.black),
+          ),
         ),
         actions: SessionData.elements.isNotEmpty && !loadPlan
             ? [

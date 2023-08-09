@@ -9,9 +9,9 @@ class Utils {
     return AppLocalization.of(context).getTranslatedValue(tag).toString();
   }
 
-  Future<bool?> errorMessage(BuildContext context, String tag) {
+  Future<bool?> errorMessage(BuildContext context, String tag, {bool translate = true}) {
     return Fluttertoast.showToast(
-      msg: Utils().translate(context, tag),
+      msg: translate ? Utils().translate(context, tag) : tag,
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: 5,
@@ -21,9 +21,9 @@ class Utils {
     );
   }
 
-  Future<bool?> successMessage(BuildContext context, String tag) {
+  Future<bool?> successMessage(BuildContext context, String tag, {bool translate = true}) {
     return Fluttertoast.showToast(
-      msg: Utils().translate(context, tag),
+      msg: translate ? Utils().translate(context, tag) : tag,
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: 5,

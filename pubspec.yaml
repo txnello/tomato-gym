@@ -15,6 +15,7 @@ dependencies:
   fluttertoast: ^8.2.2
   flutter_native_splash: ^2.2.18
   flutter_launcher_icons: ^0.12.0
+  package_info: ^2.0.2
 
 flutter_icons:
   android: "launcher_icon"
