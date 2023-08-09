@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_const_literals_to_create_immutables, prefer_interpolation_to_compose_strings
+// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_const_literals_to_create_immutables, prefer_interpolation_to_compose_strings, use_build_context_synchronously
 
 import "dart:convert";
 
@@ -26,6 +26,8 @@ class _ManagePlanState extends State<ManagePlan> {
   List<TextEditingController> repsList = [];
   List<TextEditingController> initWeightList = [];
 
+  List<TextEditingController> currentWeightList = [];
+
   @override
   void initState() {
     super.initState();
@@ -40,12 +42,14 @@ class _ManagePlanState extends State<ManagePlan> {
         setsList.add(TextEditingController());
         repsList.add(TextEditingController());
         initWeightList.add(TextEditingController());
+        currentWeightList.add(TextEditingController());
 
         // init fields data
         exerciseNameList.last.text = el.exerciseName;
         setsList.last.text = el.sets;
         repsList.last.text = el.reps;
         initWeightList.last.text = el.initWeight;
+        currentWeightList.last.text = el.currentWeight;
       });
     }
   }
@@ -273,7 +277,6 @@ class _ManagePlanState extends State<ManagePlan> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-
                               // exercise name
                               Text(
                                 SessionData.elements[i].exerciseName,
@@ -293,7 +296,7 @@ class _ManagePlanState extends State<ManagePlan> {
                             ],
                           ),
                         ),
-                        
+
                         // initial weight
                         Container(
                           width: 80,
@@ -306,8 +309,8 @@ class _ManagePlanState extends State<ManagePlan> {
                         // current weight
                         Expanded(
                           child: CustomTextField(
-                            hintText: Utils().translate(context, "exercise_name"),
-                            controller: exerciseNameList[i],
+                            hintText: Utils().translate(context, "current_weight"),
+                            controller: currentWeightList[i],
                           ),
                         ),
                       ],
@@ -344,9 +347,9 @@ class _ManagePlanState extends State<ManagePlan> {
 
                 bool emptyFields = false;
 
-                // save data
+                // retrieve data
                 for (int i = 0; i < SessionData.elements.length; i++) {
-                  if (!SessionData.elements[i].divider && (exerciseNameList[i].text == "" || setsList[i].text == "" || repsList[i].text == "" || initWeightList[i].text == "")) {
+                  if (!SessionData.elements[i].divider && (exerciseNameList[i].text == "" || setsList[i].text == "" || repsList[i].text == "" || initWeightList[i].text == "" || currentWeightList[i].text == "")) {
                     emptyFields = true;
                   }
 
@@ -354,11 +357,11 @@ class _ManagePlanState extends State<ManagePlan> {
                   SessionData.elements[i].sets = setsList[i].text;
                   SessionData.elements[i].reps = repsList[i].text;
                   SessionData.elements[i].initWeight = initWeightList[i].text;
+                  SessionData.elements[i].currentWeight = currentWeightList[i].text;
                 }
 
                 if (emptyFields) {
-                  Fluttertoast.showToast(
-                      msg: Utils().translate(context, "empty_fields_message"), toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.BOTTOM, timeInSecForIosWeb: 5, backgroundColor: Colors.red, textColor: Colors.white, fontSize: 16.0);
+                  Utils().errorMessage(context, "empty_fields_message");
 
                   setState(() {
                     isSaving = false;
@@ -367,9 +370,24 @@ class _ManagePlanState extends State<ManagePlan> {
                   return;
                 }
 
-                SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-                List<String> elementEncoded = SessionData.elements.map((element) => jsonEncode(element.toJson())).toList();
-                await sharedPreferences.setStringList('elements', elementEncoded);
+                // save data
+                try {
+                  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+                  List<String> elementEncoded = SessionData.elements.map((element) => jsonEncode(element.toJson())).toList();
+                  await sharedPreferences.setStringList('elements', elementEncoded);
+
+                  // success message
+                  Utils().successMessage(context, "save_success");
+                } catch (e) {
+                  // error message
+                  Utils().errorMessage(context, "save_failure");
+
+                  setState(() {
+                    isSaving = false;
+                  });
+
+                  return;
+                }
 
                 setState(() {
                   isSaving = false;

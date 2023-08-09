@@ -1,6 +1,6 @@
 {
-    "add_exercise": "Add an exercise",
     "create_new_plan": "Create a new plan",
+    "current_weight": "Current weight",
     "delete_split_workout": "Delete split",
     "empty_fields_message": "Fill in all fields",
     "exercise": "Exercise",
@@ -9,6 +9,8 @@
     "init_weight_shorten": "IW",
     "no_plan_found": "No plan found!",
     "reps": "Reps",
+    "save_failure": "Saving error.",
+    "save_success": "Saved successfully!",
     "sets": "Sets",
     "split_workout": "Split workout",
 

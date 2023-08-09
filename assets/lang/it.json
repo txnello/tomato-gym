@@ -1,5 +1,6 @@
 {
     "create_new_plan": "Crea una nuova scheda",
+    "current_weight": "Peso attuale",
     "delete_split_workout": "Rimuovi la divisione",
     "empty_fields_message": "Riempire tutti i campi",
     "exercise": "Esercizio",
@@ -8,6 +9,8 @@
     "init_weight_shorten": "PI",
     "no_plan_found": "Non hai ancora creato una scheda!",
     "reps": "Ripetizioni",
+    "save_failure": "Errore nel salvataggio.",
+    "save_success": "Salvataggio completato!",
     "sets": "Serie",
     "split_workout": "Dividi allenamento",
 

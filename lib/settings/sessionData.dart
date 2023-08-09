@@ -7,8 +7,9 @@ class Exercise {
   String sets = "";
   String reps = "";
   String initWeight = "";
+  String currentWeight = "";
   bool divider = false;
-  Exercise({this.exerciseName = "", this.sets = "", this.reps = "", this.initWeight = "", this.divider = false});
+  Exercise({this.exerciseName = "", this.sets = "", this.reps = "", this.initWeight = "", this.currentWeight = "", this.divider = false});
 
   factory Exercise.fromJson(Map<String, dynamic> parsedJson) {
     return Exercise(
@@ -16,6 +17,7 @@ class Exercise {
       sets: parsedJson['sets'] ?? "",
       reps: parsedJson['reps'] ?? "",
       initWeight: parsedJson['initWeight'] ?? "",
+      currentWeight: parsedJson['currentWeight'] ?? "",
       divider: parsedJson['divider'] ?? false);
   }
 
@@ -25,6 +27,7 @@ class Exercise {
       "sets": sets,
       "reps": reps,
       "initWeight": initWeight,
+      "currentWeight": currentWeight,
       "divider": divider
     };
   }
