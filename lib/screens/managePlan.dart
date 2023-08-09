@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_const_literals_to_create_immutables, prefer_interpolation_to_compose_strings
 
 import "dart:convert";
 
@@ -8,6 +8,7 @@ import 'package:tomato_gym/settings/utils.dart';
 import 'package:tomato_gym/widgets/customButton.dart';
 import 'package:tomato_gym/widgets/customTextField.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ManagePlan extends StatefulWidget {
   const ManagePlan({super.key});
@@ -112,6 +113,7 @@ class _ManagePlanState extends State<ManagePlan> {
               child: CustomTextField(
                 hintText: Utils().translate(context, "sets"),
                 controller: setsList[i],
+                maxLength: 3,
               ),
             ),
 
@@ -125,6 +127,7 @@ class _ManagePlanState extends State<ManagePlan> {
               child: CustomTextField(
                 hintText: Utils().translate(context, "reps"),
                 controller: repsList[i],
+                maxLength: 3,
               ),
             ),
 
@@ -135,6 +138,7 @@ class _ManagePlanState extends State<ManagePlan> {
               child: CustomTextField(
                 hintText: Utils().translate(context, "init_weight"),
                 controller: initWeightList[i],
+                maxLength: 3,
               ),
             )
           ],
@@ -187,7 +191,7 @@ class _ManagePlanState extends State<ManagePlan> {
     );
   }
 
-  Widget loadPlan() {
+  Widget loadEditablePlan() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Column(
@@ -247,6 +251,73 @@ class _ManagePlanState extends State<ManagePlan> {
     );
   }
 
+  Widget loadReadOnlyPlan() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Column(
+        children: [
+          for (int i = 0; i < SessionData.elements.length; i++)
+            SessionData.elements[i].divider
+                // show divider
+                ? Divider(
+                    color: Colors.red,
+                    thickness: 5,
+                  )
+                : Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          width: 150,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+
+                              // exercise name
+                              Text(
+                                SessionData.elements[i].exerciseName,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                              ),
+
+                              // sets x reps
+                              Row(
+                                children: [
+                                  Text(SessionData.elements[i].sets),
+                                  Text("X"),
+                                  Text(SessionData.elements[i].reps),
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
+                        
+                        // initial weight
+                        Container(
+                          width: 80,
+                          child: Text(
+                            Utils().translate(context, "init_weight_shorten") + ": " + SessionData.elements[i].initWeight,
+                            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+
+                        // current weight
+                        Expanded(
+                          child: CustomTextField(
+                            hintText: Utils().translate(context, "exercise_name"),
+                            controller: exerciseNameList[i],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -261,8 +332,8 @@ class _ManagePlanState extends State<ManagePlan> {
       body: SessionData.elements.isEmpty && !newPlan
           ? welcomePage()
           : newPlan
-              ? SingleChildScrollView(child: loadPlan())
-              : Center(child: Text("aa")),
+              ? SingleChildScrollView(child: loadEditablePlan())
+              : SingleChildScrollView(child: loadReadOnlyPlan()),
       floatingActionButton: SessionData.elements.isEmpty && !newPlan || SessionData.elements.isEmpty
           ? SizedBox()
           : FloatingActionButton(
@@ -271,20 +342,38 @@ class _ManagePlanState extends State<ManagePlan> {
                   isSaving = true;
                 });
 
+                bool emptyFields = false;
+
                 // save data
                 for (int i = 0; i < SessionData.elements.length; i++) {
+                  if (!SessionData.elements[i].divider && (exerciseNameList[i].text == "" || setsList[i].text == "" || repsList[i].text == "" || initWeightList[i].text == "")) {
+                    emptyFields = true;
+                  }
+
                   SessionData.elements[i].exerciseName = exerciseNameList[i].text;
                   SessionData.elements[i].sets = setsList[i].text;
                   SessionData.elements[i].reps = repsList[i].text;
                   SessionData.elements[i].initWeight = initWeightList[i].text;
                 }
 
+                if (emptyFields) {
+                  Fluttertoast.showToast(
+                      msg: Utils().translate(context, "empty_fields_message"), toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.BOTTOM, timeInSecForIosWeb: 5, backgroundColor: Colors.red, textColor: Colors.white, fontSize: 16.0);
+
+                  setState(() {
+                    isSaving = false;
+                  });
+
+                  return;
+                }
+
                 SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
                 List<String> elementEncoded = SessionData.elements.map((element) => jsonEncode(element.toJson())).toList();
-                await sharedPreferences.setStringList('elements', elementEncoded); //[]);
+                await sharedPreferences.setStringList('elements', elementEncoded);
 
                 setState(() {
                   isSaving = false;
+                  newPlan = false;
                 });
               },
               backgroundColor: Colors.red,
