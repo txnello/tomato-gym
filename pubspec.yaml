@@ -25,7 +25,7 @@ flutter_icons:
 
 flutter_native_splash:
   color: "#FFFFFF"
-  image: assets/img/splash.png
+  image: assets/img/icon.png
 # flutter pub add flutter_native_splash
 # dart run flutter_native_splash:create
 
