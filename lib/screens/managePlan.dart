@@ -40,6 +40,8 @@ class _ManagePlanState extends State<ManagePlan> {
     loadSessionData();
   }
 
+  // SETUP THE ENVIRONMENT //
+
   loadSessionData() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
@@ -120,6 +122,8 @@ class _ManagePlanState extends State<ManagePlan> {
     }
   }
 
+  // USEFUL FUNCTIONS //
+
   addExercise() {
     setState(() {
       exerciseNameList.add(TextEditingController());
@@ -147,13 +151,13 @@ class _ManagePlanState extends State<ManagePlan> {
     });
   }
 
-  _editPlan() {
+  editPlan() {
     setState(() {
       loadPlan = true;
     });
   }
 
-  _copyPlan() async {
+  copyPlan() async {
     try {
       String textCopy = "";
 
@@ -178,16 +182,16 @@ class _ManagePlanState extends State<ManagePlan> {
     }
   }
 
-  _loadPlan() {
+  createNewPlan() {
     Utils().showBooleanAlertDialog(context, Utils().translate(context, "generic_warning") + '!', Utils().translate(context, "reset_confirmation"), () {
-      _resetData();
+      resetData();
 
       Navigator.pop(context);
     });
   }
 
-  _resetData() async {
-    _copyPlan();
+  resetData() async {
+    copyPlan();
 
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     sharedPreferences.setStringList('elements', []);
@@ -201,6 +205,74 @@ class _ManagePlanState extends State<ManagePlan> {
     });
   }
 
+  // UI GENERATORS //
+
+  Widget welcomePage() {
+    return
+        // if no plan has been found
+        Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        SizedBox(height: 150),
+
+        // welcome
+        Text(
+          Utils().translate(context, "welcome"),
+          textAlign: TextAlign.center,
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
+        ),
+
+        SizedBox(height: 50),
+
+        // message
+        Container(
+          width: 200,
+          child: Text(
+            Utils().translate(context, "no_plan_found"),
+            textAlign: TextAlign.center,
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 23),
+          ),
+        ),
+
+        SizedBox(height: 20),
+
+        // button
+        Center(
+            child: CustomButton(
+                text: Utils().translate(context, "create_new_plan"),
+                icon: Icons.arrow_right,
+                onTap: () {
+                  TextEditingController daysController = TextEditingController();
+
+                  Utils().showInputAlertDialog(context, Utils().translate(context, "increase_weights_alert_title"), daysController, Utils().translate(context, "generic_days"), maxLength: 3, numbersOnly: true, () async {
+                    // check if input is a number
+                    if (int.tryParse(daysController.text) == null) {
+                      Utils().errorMessage(context, "increase_weights_alert_error");
+                      return;
+                    }
+
+                    DateTime dateIncrease = DateTime.now().add(Duration(days: int.parse(daysController.text)));
+
+                    setState(() {
+                      // next page
+                      loadPlan = true;
+
+                      SessionData.dateIncrease = dateIncrease;
+                      SessionData.daysDelta = int.parse(daysController.text);
+                    });
+
+                    // save days in local storage
+                    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+                    sharedPreferences.setString('dateIncrease', DateFormat("yyyy-MM-dd").format(dateIncrease));
+                    sharedPreferences.setString('daysDelta', daysController.text);
+
+                    Navigator.pop(context);
+                  });
+                })),
+      ],
+    );
+  }
+  
   Widget exerciseForm(int i) {
     if (SessionData.elements[i].divider) {
       return Divider(
@@ -217,6 +289,8 @@ class _ManagePlanState extends State<ManagePlan> {
           ),
         SizedBox(height: 5),
         Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             // exercise name
             Expanded(
@@ -282,72 +356,6 @@ class _ManagePlanState extends State<ManagePlan> {
           ],
         ),
         SizedBox(height: 5),
-      ],
-    );
-  }
-
-  Widget welcomePage() {
-    return
-        // if no plan has been found
-        Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        SizedBox(height: 150),
-
-        // welcome
-        Text(
-          Utils().translate(context, "welcome"),
-          textAlign: TextAlign.center,
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
-        ),
-
-        SizedBox(height: 50),
-
-        // message
-        Container(
-          width: 200,
-          child: Text(
-            Utils().translate(context, "no_plan_found"),
-            textAlign: TextAlign.center,
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 23),
-          ),
-        ),
-
-        SizedBox(height: 20),
-
-        // button
-        Center(
-            child: CustomButton(
-                text: Utils().translate(context, "create_new_plan"),
-                icon: Icons.arrow_right,
-                onTap: () {
-                  TextEditingController daysController = TextEditingController();
-
-                  Utils().showInputAlertDialog(context, Utils().translate(context, "increase_weights_alert_title"), daysController, Utils().translate(context, "generic_days"), maxLength: 3, numbersOnly: true, () async {
-                    // check if input is a number
-                    if (int.tryParse(daysController.text) == null) {
-                      Utils().errorMessage(context, "increase_weights_alert_error");
-                      return;
-                    }
-
-                    DateTime dateIncrease = DateTime.now().add(Duration(days: int.parse(daysController.text)));
-
-                    setState(() {
-                      // next page
-                      loadPlan = true;
-
-                      SessionData.dateIncrease = dateIncrease;
-                      SessionData.daysDelta = int.parse(daysController.text);
-                    });
-
-                    // save days in local storage
-                    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-                    sharedPreferences.setString('dateIncrease', DateFormat("yyyy-MM-dd").format(dateIncrease));
-                    sharedPreferences.setString('daysDelta', daysController.text);
-
-                    Navigator.pop(context);
-                  });
-                })),
       ],
     );
   }
@@ -512,7 +520,7 @@ class _ManagePlanState extends State<ManagePlan> {
             ? [
                 GestureDetector(
                   onTap: () {
-                    _editPlan();
+                    editPlan();
                   },
                   child: Icon(
                     Icons.edit,
@@ -521,10 +529,10 @@ class _ManagePlanState extends State<ManagePlan> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: GestureDetector(
                       onTap: () {
-                        _copyPlan();
+                        copyPlan();
                       },
                       child: Icon(
                         Icons.copy_all,
@@ -534,7 +542,7 @@ class _ManagePlanState extends State<ManagePlan> {
                 ),
                 GestureDetector(
                     onTap: () {
-                      _loadPlan();
+                      createNewPlan();
                     },
                     child: Icon(
                       Icons.add_box_rounded,

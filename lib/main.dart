@@ -1,14 +1,9 @@
 // ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_const_literals_to_create_immutables, depend_on_referenced_packages
 
-import "dart:convert";
-import 'package:intl/intl.dart';
-
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tomato_gym/screens/managePlan.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:tomato_gym/settings/app_localization.dart';
-import 'package:tomato_gym/settings/sessionData.dart';
 
 void main() {
   runApp(const MyApp());
