@@ -354,7 +354,7 @@ class _ManagePlanState extends State<ManagePlan> {
 
   Widget loadEditablePlan() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -415,19 +415,28 @@ class _ManagePlanState extends State<ManagePlan> {
 
   Widget loadReadOnlyPlan() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Column(
         children: [
           for (int i = 0; i < SessionData.elements.length; i++)
             SessionData.elements[i].divider
                 // show divider
-                ? Divider(
-                    color: Colors.red,
-                    thickness: 5,
-                  )
-                : Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 5),
-                    child: Row(
+                ? Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 7),
+                  child: Divider(
+                      color: Colors.red,
+                      thickness: 5,
+                    ),
+                )
+                : Column(
+                  children: [
+                    if (i > 0 && !SessionData.elements[i - 1].divider)
+                    Divider(
+                      color: Colors.grey[800],
+                    ),
+                    SizedBox(height: 5),
+                    
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
@@ -437,7 +446,7 @@ class _ManagePlanState extends State<ManagePlan> {
                             children: [
                               // exercise name
                               Text(
-                                SessionData.elements[i].exerciseName,
+                                SessionData.elements[i].exerciseName.toUpperCase(),
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 2,
                                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
@@ -447,7 +456,7 @@ class _ManagePlanState extends State<ManagePlan> {
                               Row(
                                 children: [
                                   Text(SessionData.elements[i].sets),
-                                  Text("X"),
+                                  Text(" × "),
                                   Text(SessionData.elements[i].reps),
                                 ],
                               )
@@ -458,9 +467,11 @@ class _ManagePlanState extends State<ManagePlan> {
                         // initial weight
                         Container(
                           width: 80,
-                          child: Text(
-                            Utils().translate(context, "init_weight_shorten") + ": " + SessionData.elements[i].initWeight,
-                            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                          child: Center(
+                            child: Text(
+                              "🏋️ " + SessionData.elements[i].initWeight,
+                              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                            ),
                           ),
                         ),
 
@@ -475,7 +486,8 @@ class _ManagePlanState extends State<ManagePlan> {
                         ),
                       ],
                     ),
-                  ),
+                  ],
+                ),
         ],
       ),
     );
