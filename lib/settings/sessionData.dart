@@ -1,4 +1,7 @@
 class SessionData {
+  static DateTime dateIncrease = DateTime.now().add(const Duration(days: 50));
+  static int daysDelta = -1;
+
   static List<Exercise> elements = [];
 }
 

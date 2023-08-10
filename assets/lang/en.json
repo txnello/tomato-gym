@@ -10,10 +10,15 @@
     "exercise": "Exercise",
     "exercise_name": "Exercise name",
 
+    "generic_days": "Days",
     "generic_no": "No",
+    "generic_remember": "Remember",
     "generic_warning": "Warning",
     "generic_yes": "Yes",
 
+    "increase_weights_alert_error": "Insert an integer number",
+    "increase_weights_alert_title": "Indicate how many days before increasing loads",
+    "increase_weights_alert": "Today you should increase the loads, I will notify you again in a few days, precisely: ",
     "init_weight": "Initial weight",
     "init_weight_shorten": "IW",
 

@@ -10,10 +10,15 @@
     "exercise": "Esercizio",
     "exercise_name": "Nome dell'esercizio",
 
+    "generic_days": "Giorni",
     "generic_no": "No",
+    "generic_remember": "Ricorda",
     "generic_warning": "Attenzione",
     "generic_yes": "Sì",
 
+    "increase_weights_alert_error": "Inserire un numero senza virgola",
+    "increase_weights_alert_title": "Indicare quanti giorni prima di alzare i carichi",
+    "increase_weights_alert": "Oggi dovresti alzare i carichi, ti avviserò di nuovo tra un po' di giorni, precisamente: ",
     "init_weight": "Peso iniziale",
     "init_weight_shorten": "PI",
 

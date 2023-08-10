@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_const_literals_to_create_immutables, prefer_interpolation_to_compose_strings, use_build_context_synchronously
 
 import "dart:convert";
+import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,6 +22,7 @@ class ManagePlan extends StatefulWidget {
 class _ManagePlanState extends State<ManagePlan> {
   bool loadPlan = false;
   bool isSaving = false;
+  bool isLoading = true;
 
   List<TextEditingController> exerciseNameList = [];
   List<TextEditingController> setsList = [];
@@ -35,16 +37,62 @@ class _ManagePlanState extends State<ManagePlan> {
   void initState() {
     super.initState();
 
+    loadSessionData();
+  }
+
+  loadSessionData() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+
+    // retrieve elements
+    final elements = await sharedPreferences.getStringList('elements');
+
+    if (elements == null) {
+      SessionData.elements = [];
+    } else {
+      for (int i = 0; i < elements.length; i++) {
+        SessionData.elements.add(Exercise.fromJson(jsonDecode(elements[i])));
+      }
+    }
+
+    // retrieve date
+    final dateIncrease = await sharedPreferences.getString('dateIncrease');
+
+    if (dateIncrease != null) {
+      SessionData.dateIncrease = DateFormat("yyyy-MM-dd").parse(dateIncrease);
+    }
+
+    // retrieve days delta
+    final daysDelta = await sharedPreferences.getString('daysDelta');
+
+    if (daysDelta != null) {
+      SessionData.daysDelta = int.parse(daysDelta);
+    }
+
+    // unlock loading
+    setState(() {
+      isLoading = false;
+    });
+
     initDataSources();
     initUtils();
   }
 
   initUtils() async {
+    // show app version
     final packageInfo = await PackageInfo.fromPlatform();
 
     setState(() {
       version = packageInfo.version;
     });
+
+    // show weights alert
+    if (DateTime.now().difference(SessionData.dateIncrease).inSeconds >= 0) {
+      SessionData.dateIncrease = DateTime.now().add(Duration(days: SessionData.daysDelta));
+      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+      sharedPreferences.setString('dateIncrease', DateFormat("yyyy-MM-dd").format(SessionData.dateIncrease));
+
+      Utils().showInfoAlertDialog(context, Utils().translate(context, "generic_remember") + '!', Utils().translate(context, "increase_weights_alert") + SessionData.daysDelta.toString());
+    }
   }
 
   initDataSources() {
@@ -131,15 +179,20 @@ class _ManagePlanState extends State<ManagePlan> {
   }
 
   _loadPlan() {
-    Utils().showAlertDialog(context, Utils().translate(context, "generic_warning") + '!', Utils().translate(context, "reset_confirmation"), () {
+    Utils().showBooleanAlertDialog(context, Utils().translate(context, "generic_warning") + '!', Utils().translate(context, "reset_confirmation"), () {
       _resetData();
 
       Navigator.pop(context);
     });
   }
 
-  _resetData() {
+  _resetData() async {
     _copyPlan();
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.setStringList('elements', []);
+    sharedPreferences.setString('dateIncrease', DateFormat("yyyy-MM-dd").format(DateTime.now().add(const Duration(days: 50))));
+    sharedPreferences.setString('daysDelta', "-1");
 
     setState(() {
       SessionData.elements = [];
@@ -196,6 +249,7 @@ class _ManagePlanState extends State<ManagePlan> {
                 hintText: Utils().translate(context, "sets"),
                 controller: setsList[i],
                 maxLength: 3,
+                numbersOnly: true,
               ),
             ),
 
@@ -210,6 +264,7 @@ class _ManagePlanState extends State<ManagePlan> {
                 hintText: Utils().translate(context, "reps"),
                 controller: repsList[i],
                 maxLength: 3,
+                numbersOnly: true,
               ),
             ),
 
@@ -221,6 +276,7 @@ class _ManagePlanState extends State<ManagePlan> {
                 hintText: Utils().translate(context, "init_weight"),
                 controller: initWeightList[i],
                 maxLength: 3,
+                numbersOnly: true,
               ),
             )
           ],
@@ -265,8 +321,31 @@ class _ManagePlanState extends State<ManagePlan> {
                 text: Utils().translate(context, "create_new_plan"),
                 icon: Icons.arrow_right,
                 onTap: () {
-                  setState(() {
-                    loadPlan = true;
+                  TextEditingController daysController = TextEditingController();
+
+                  Utils().showInputAlertDialog(context, Utils().translate(context, "increase_weights_alert_title"), daysController, Utils().translate(context, "generic_days"), maxLength: 3, numbersOnly: true, () async {
+                    // check if input is a number
+                    if (int.tryParse(daysController.text) == null) {
+                      Utils().errorMessage(context, "increase_weights_alert_error");
+                      return;
+                    }
+
+                    DateTime dateIncrease = DateTime.now().add(Duration(days: int.parse(daysController.text)));
+
+                    setState(() {
+                      // next page
+                      loadPlan = true;
+
+                      SessionData.dateIncrease = dateIncrease;
+                      SessionData.daysDelta = int.parse(daysController.text);
+                    });
+
+                    // save days in local storage
+                    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+                    sharedPreferences.setString('dateIncrease', DateFormat("yyyy-MM-dd").format(dateIncrease));
+                    sharedPreferences.setString('daysDelta', daysController.text);
+
+                    Navigator.pop(context);
                   });
                 })),
       ],
@@ -390,6 +469,8 @@ class _ManagePlanState extends State<ManagePlan> {
                           child: CustomTextField(
                             hintText: Utils().translate(context, "current_weight"),
                             controller: currentWeightList[i],
+                            maxLength: 3,
+                            numbersOnly: true,
                           ),
                         ),
                       ],
@@ -452,12 +533,18 @@ class _ManagePlanState extends State<ManagePlan> {
               ]
             : [],
       ),
-      body: SessionData.elements.isEmpty && !loadPlan
-          ? welcomePage()
-          : loadPlan
-              ? SingleChildScrollView(child: loadEditablePlan())
-              : SingleChildScrollView(child: loadReadOnlyPlan()),
-      floatingActionButton: SessionData.elements.isEmpty && !loadPlan || SessionData.elements.isEmpty
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(
+                color: Colors.red,
+              ),
+            )
+          : SessionData.elements.isEmpty && !loadPlan
+              ? welcomePage()
+              : loadPlan
+                  ? SingleChildScrollView(child: loadEditablePlan())
+                  : SingleChildScrollView(child: loadReadOnlyPlan()),
+      floatingActionButton: !isLoading && SessionData.elements.isEmpty && !loadPlan || SessionData.elements.isEmpty
           ? SizedBox()
           : FloatingActionButton(
               onPressed: () async {
