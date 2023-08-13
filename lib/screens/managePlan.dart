@@ -40,8 +40,7 @@ class _ManagePlanState extends State<ManagePlan> {
     loadSessionData();
   }
 
-  // SETUP THE ENVIRONMENT //
-
+  // #region SETUP THE ENVIRONMENT
   loadSessionData() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
@@ -121,9 +120,9 @@ class _ManagePlanState extends State<ManagePlan> {
       });
     }
   }
+  // #endregion
 
-  // USEFUL FUNCTIONS //
-
+  // #region USEFUL FUNCTIONS
   addExercise() {
     setState(() {
       exerciseNameList.add(TextEditingController());
@@ -204,9 +203,9 @@ class _ManagePlanState extends State<ManagePlan> {
       initDataSources();
     });
   }
+  // #endregion
 
-  // UI GENERATORS //
-
+  // #region UI GENERATORS
   Widget welcomePage() {
     return
         // if no plan has been found
@@ -272,7 +271,7 @@ class _ManagePlanState extends State<ManagePlan> {
       ],
     );
   }
-  
+
   Widget exerciseForm(int i) {
     if (SessionData.elements[i].divider) {
       return Divider(
@@ -324,6 +323,7 @@ class _ManagePlanState extends State<ManagePlan> {
                 controller: setsList[i],
                 maxLength: 3,
                 numbersOnly: true,
+                textAlignCenter: true,
               ),
             ),
 
@@ -339,6 +339,7 @@ class _ManagePlanState extends State<ManagePlan> {
                 controller: repsList[i],
                 maxLength: 3,
                 numbersOnly: true,
+                textAlignCenter: true,
               ),
             ),
 
@@ -351,6 +352,7 @@ class _ManagePlanState extends State<ManagePlan> {
                 controller: initWeightList[i],
                 maxLength: 3,
                 numbersOnly: true,
+                textAlignCenter: true,
               ),
             )
           ],
@@ -430,76 +432,77 @@ class _ManagePlanState extends State<ManagePlan> {
             SessionData.elements[i].divider
                 // show divider
                 ? Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 7),
-                  child: Divider(
+                    padding: const EdgeInsets.symmetric(vertical: 7),
+                    child: Divider(
                       color: Colors.red,
                       thickness: 5,
                     ),
-                )
+                  )
                 : Column(
-                  children: [
-                    if (i > 0 && !SessionData.elements[i - 1].divider)
-                    Divider(
-                      color: Colors.grey[800],
-                    ),
-                    SizedBox(height: 5),
-                    
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          width: 150,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // exercise name
-                              Text(
-                                SessionData.elements[i].exerciseName.toUpperCase(),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
-                                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                              ),
-
-                              // sets x reps
-                              Row(
-                                children: [
-                                  Text(SessionData.elements[i].sets),
-                                  Text(" × "),
-                                  Text(SessionData.elements[i].reps),
-                                ],
-                              )
-                            ],
-                          ),
+                    children: [
+                      if (i > 0 && !SessionData.elements[i - 1].divider)
+                        Divider(
+                          color: Colors.grey[800],
                         ),
+                      SizedBox(height: 5),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            width: 150,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // exercise name
+                                Text(
+                                  SessionData.elements[i].exerciseName.toUpperCase(),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
+                                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                                ),
 
-                        // initial weight
-                        Container(
-                          width: 80,
-                          child: Center(
-                            child: Text(
-                              "🏋️ " + SessionData.elements[i].initWeight,
-                              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                                // sets x reps
+                                Row(
+                                  children: [
+                                    Text(SessionData.elements[i].sets),
+                                    Text(" × "),
+                                    Text(SessionData.elements[i].reps),
+                                  ],
+                                )
+                              ],
                             ),
                           ),
-                        ),
 
-                        // current weight
-                        Expanded(
-                          child: CustomTextField(
-                            hintText: Utils().translate(context, "current_weight"),
-                            controller: currentWeightList[i],
-                            maxLength: 3,
-                            numbersOnly: true,
+                          // initial weight
+                          Container(
+                            width: 80,
+                            child: Center(
+                              child: Text(
+                                "🏋️ " + SessionData.elements[i].initWeight,
+                                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                              ),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+
+                          // current weight
+                          Expanded(
+                            child: CustomTextField(
+                              hintText: Utils().translate(context, "current_weight"),
+                              controller: currentWeightList[i],
+                              maxLength: 3,
+                              numbersOnly: true,
+                              textAlignCenter: true,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
         ],
       ),
     );
   }
+  // #endregion
 
   @override
   Widget build(BuildContext context) {
