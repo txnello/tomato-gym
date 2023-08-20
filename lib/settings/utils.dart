@@ -95,7 +95,7 @@ class Utils {
     );
   }
 
-  showInputAlertDialog(BuildContext context, String title, TextEditingController controller, String hintText, VoidCallback onConfirm, {int maxLength = 300, bool numbersOnly = false}) {
+  showInputAlertDialog(BuildContext context, String title, TextEditingController controller, String hintText, VoidCallback onConfirm, {int maxLength = 300, bool numbersOnly = false, bool textAlignCenter = false}) {
     // set up the button
     Widget okButton = TextButton(
       child: Text("OK"),
@@ -110,6 +110,7 @@ class Utils {
         hintText: hintText,
         maxLength: maxLength,
         numbersOnly: numbersOnly,
+        textAlignCenter: textAlignCenter,
       ),
       actions: [
         okButton,

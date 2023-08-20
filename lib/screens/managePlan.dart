@@ -243,7 +243,7 @@ class _ManagePlanState extends State<ManagePlan> {
                 onTap: () {
                   TextEditingController daysController = TextEditingController();
 
-                  Utils().showInputAlertDialog(context, Utils().translate(context, "increase_weights_alert_title"), daysController, Utils().translate(context, "generic_days"), maxLength: 3, numbersOnly: true, () async {
+                  Utils().showInputAlertDialog(context, Utils().translate(context, "increase_weights_alert_title"), daysController, Utils().translate(context, "generic_days"), maxLength: 3, textAlignCenter: true, numbersOnly: true, () async {
                     // check if input is a number
                     if (int.tryParse(daysController.text) == null) {
                       Utils().errorMessage(context, "increase_weights_alert_error");
