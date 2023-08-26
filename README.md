@@ -1,8 +1,8 @@
 # Tomato Gym
 
-Tomato Gym is an app that allows you to track your progress in the gym.
+Tomato Gym is an app that allows you to track your workout progress.
 
-The app is easy to use and doesn't require an internet connection to work.
+The app is easy to use and doesn't require an internet connection.
 
 <details>
   <summary>Screenshots</summary>
