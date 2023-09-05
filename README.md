@@ -7,10 +7,10 @@ The app is easy to use and doesn't require an internet connection.
 <details>
   <summary>Screenshots</summary>
   <img src="https://i.imgur.com/Jdb0zpb.jpg" width="400">
-  <img src="https://i.imgur.com/wGEk5km.jpg" width="400">
-  <img src="https://i.imgur.com/G2sBE2k.jpg" width="400">
-  <img src="https://i.imgur.com/HeRAtuv.jpg" width="400">
-  <img src="https://i.imgur.com/Xvj2v60.jpg" width="400">
-  <img src="https://i.imgur.com/0PESVAp.jpg" width="400">
+  <img src="https://i.imgur.com/0W6FQJ0.png" width="400">
+  <img src="https://i.imgur.com/hhKFCpd.png" width="400">
+  <img src="https://i.imgur.com/qci6Psz.png" width="400">
+  <img src="https://i.imgur.com/URb8VyO.png" width="400">
+  <img src="https://i.imgur.com/TJTSZxi.png" width="400">
   <img src="https://i.imgur.com/8TSDyvB.jpg" width="400">
 </details>
