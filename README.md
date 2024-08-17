@@ -5,7 +5,7 @@ Before we begin, "Tomato Gym" has nothing to do with tomatoes. The name was rand
 That being said, we're talking about **an Android app** that allows you to **track your gym progress** without using a data network.
 
 ## Overview
-In terms of timing, this project lasted a total of **two months**, from sketching an initial design on paper to the [publication on the Play Store](https://play.google.com/store/apps/details?id=it.tomato_gym&hl=it&gl=US). Being a personal project, there was no development team; I personally handled all phases of the project.
+In terms of timing, this project lasted a total of **two months**, from sketching an initial design on paper to the [publication on GitHub](https://github.com/txnello/tomato-gym/raw/main/apk-tomato-sauce.apk). Being a personal project, there was no development team; I personally handled all phases of the project.
 
 The underlying goal is very simple: to enable as many people as possible to **track their gym progress without depending on external factors**, so they can consult and modify this data anytime, anywhere.
 
@@ -35,4 +35,4 @@ Certainly, **it's not a finished app**, many interesting features could be added
 
 From this experience, I learned that it is **very important to base yourself on the needs of the end user**, to understand them well and order them. I also learned that **the most complex and articulated idea is not always the best**; in this case, the chosen idea is the simplest and most intuitive.
 
-[Download it from the Play Store!](https://play.google.com/store/apps/details?id=it.tomato_gym&hl=it&gl=US)
+[Download it from GitHub!](https://github.com/txnello/tomato-gym/raw/main/apk-tomato-sauce.apk)
